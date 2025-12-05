@@ -1,5 +1,4 @@
 def realiza_banqueiro(P_inicial,N_inicial,livre_inicial): 
-
     P = P_inicial.copy()
     N = N_inicial.copy()
     livre = livre_inicial
@@ -7,9 +6,7 @@ def realiza_banqueiro(P_inicial,N_inicial,livre_inicial):
     estados = []
     livres = []
 
-    # Inicia com deadlock como False, caso ache um muda para True
     deadLock_detectado = False
-    # Salva os Estados iniciais
     def salvar():
         estados.append([(P[i], N[i]) for i in range(3)])
         livres.append(livre)
@@ -19,32 +16,26 @@ def realiza_banqueiro(P_inicial,N_inicial,livre_inicial):
     while True:
         executou = False
         for i in range(len(P)):
-            # Processo finalizou e continua para o próximo 
             if N[i] == "-":
                 continue
-            
-            # Para ser executado deve haver Posse + Livre >= Necessário 
             if P[i] + livre >= N[i]:
-                # Execução 
                 falta = N[i] - P[i]
                 livre -= falta
                 P[i] = N[i]
                 salvar()
 
-                # Libera o Recurso ao terminar o processo!
                 livre += P[i]
                 P[i] = 0
                 N[i] = "-"
                 salvar()
 
                 executou = True
-                break # Encontra o processo e retoma a busca de um outro
+                break
 
         if not executou:
-            # Caso um processo não acabe, é um DeadLock
             if any(N[i] != "-" for i in range(3)):
                 deadLock_detectado = True
-            break # Fim da Simulação
+            break
     
     return estados, livres, deadLock_detectado
 
@@ -88,18 +79,15 @@ def montar_tabela(estados, livres, deadLock_detectado):
         print("\nO sistema está em um estado seguro (todos os processos terminaram).")
 
 
-# Processo sem DeadLock
 processos = ["A", "B", "C"]
 P_inicial = [3, 2, 2]
 N_inicial = [9, 4, 7]
 livre_inicial = 3
 
-# Processoo para Deadlock
-P_inicial_deadLock = [4, 2, 2] # P de A alterado para 4
+P_inicial_deadLock = [4, 2, 2] 
 N_inicial = [9, 4, 7]
-livre_inicial_deadLock = 2 # Livre alterado para 2
+livre_inicial_deadLock = 2 
 
-# Resultados do Algoritimo
 print("----------------- Algoritimo Banqueiro -----------------\n")
 estado_seguro, livres_seguro, deadLock_seguro =  realiza_banqueiro(P_inicial, N_inicial, livre_inicial)
 montar_tabela(estado_seguro, livres_seguro, deadLock_seguro)
